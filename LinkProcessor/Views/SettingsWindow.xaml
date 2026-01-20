@@ -1,0 +1,127 @@
+﻿<Window x:Class="LinkProcessor.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Настройки обработки" 
+        Height="600" Width="700"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock" x:Key="HeaderStyle">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="0,10,0,5"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="HelpStyle">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,2,0,5"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Шаблон замены ссылок в тексте -->
+                <TextBlock Text="Шаблон замены ссылок в тексте" Style="{StaticResource HeaderStyle}"/>
+                <TextBlock Style="{StaticResource HelpStyle}">
+                    Определяет, как ссылки будут заменены в тексте.
+                    <LineBreak/>
+                    Доступные переменные: {number} - порядковый номер ссылки
+                    <LineBreak/>
+                    Примеры: [{number}], ({number}), ^{number}
+                </TextBlock>
+                <TextBox x:Name="LinkTemplateTextBox" 
+                         Padding="5" 
+                         FontFamily="Consolas"
+                         ToolTip="Шаблон для замены ссылки в тексте"/>
+
+                <!-- Шаблон списка источников -->
+                <TextBlock Text="Шаблон оформления списка источников" 
+                           Style="{StaticResource HeaderStyle}"
+                           Margin="0,15,0,5"/>
+                <TextBlock Style="{StaticResource HelpStyle}">
+                    Определяет формат каждой строки в списке источников.
+                    <LineBreak/>
+                    Доступные переменные:
+                    <LineBreak/>
+                    • {number} - порядковый номер
+                    <LineBreak/>
+                    • {title} - название источника
+                    <LineBreak/>
+                    • {url} - адрес ссылки
+                    <LineBreak/>
+                    Примеры:
+                    <LineBreak/>
+                    {number}. {title} — {url}
+                    <LineBreak/>
+                    [{number}] {title}. URL: {url}
+                </TextBlock>
+                <TextBox x:Name="ReferenceTemplateTextBox" 
+                         Padding="5" 
+                         FontFamily="Consolas"
+                         TextWrapping="Wrap"
+                         MinHeight="60"
+                         VerticalScrollBarVisibility="Auto"
+                         ToolTip="Шаблон для форматирования записи в списке источников"/>
+
+                <!-- Правила замены символов -->
+                <TextBlock Text="Правила замены символов в названиях" 
+                           Style="{StaticResource HeaderStyle}"
+                           Margin="0,15,0,5"/>
+                <TextBlock Style="{StaticResource HelpStyle}">
+                    Правила для очистки и нормализации названий веб-ресурсов.
+                    <LineBreak/>
+                    Формат: регулярное выражение → замена (каждое правило на новой строке)
+                    <LineBreak/>
+                    Примеры:
+                    <LineBreak/>
+                    \s+ → (заменяет множественные пробелы на один)
+                    <LineBreak/>
+                    ^\s+|\s+$ → (удаляет пробелы в начале и конце)
+                    <LineBreak/>
+                    [«»„"] → " (заменяет разные кавычки на обычные)
+                    <LineBreak/>
+                    – → - (заменяет длинное тире на обычное)
+                </TextBlock>
+                <TextBox x:Name="ReplacementRulesTextBox" 
+                         Padding="5" 
+                         FontFamily="Consolas"
+                         TextWrapping="Wrap"
+                         MinHeight="150"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         ToolTip="Правила замены символов (регулярные выражения)"/>
+
+                <TextBlock Style="{StaticResource HelpStyle}" Margin="0,5,0,0">
+                    💡 Совет: Оставьте поле пустым для отключения правил замены
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="1" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,15,0,0">
+            <Button Content="Сохранить" 
+                    Click="SaveButton_Click" 
+                    Width="100" 
+                    Padding="5"
+                    Margin="0,0,10,0"
+                    IsDefault="True"/>
+            <Button Content="Отмена" 
+                    Click="CancelButton_Click" 
+                    Width="100" 
+                    Padding="5"
+                    IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>
