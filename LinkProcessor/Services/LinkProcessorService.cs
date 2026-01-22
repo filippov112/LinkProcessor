@@ -121,7 +121,7 @@ namespace LinkProcessor.Services
                     .ToDictionary(x => x.Url, x => x);
 
                 // Заменяем ссылки в тексте на номера
-                var processedText = ReplaceLinksInText(originalText, selectedLinks, uniqueLinks, config.LinkReplacementTemplate);
+                var processedText = ReplaceLinksInText(originalText, uniqueLinks, config.LinkReplacementTemplate);
 
                 // Формируем список источников
                 var referenceList = FormatReferenceList(uniqueLinks.Values.OrderBy(x => x.Number), config.ReferenceListTemplate);
@@ -132,6 +132,36 @@ namespace LinkProcessor.Services
                 {
                     ProcessedText = processedText,
                     ReferenceList = referenceList
+                };
+            }
+            catch (Exception ex)
+            {
+                LogService.Instance.AddLog($"Ошибка при обработке текста: {ex.Message}", LogLevel.Error);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Обрабатывает текст в обратном режиме, заменяя номера ссылок в тексте на фактические URL адреса из списка
+        /// </summary>
+        public ProcessingResult ProcessTextReverse(string originalText, List<LinkItem> selectedLinks, AppConfig config)
+        {
+            try
+            {
+                // Создаем словарь уникальных ссылок с их номерами
+                var uniqueLinks = selectedLinks
+                    .GroupBy(l => l.Url)
+                    .Select((g, index) => new TextLink { Url = g.Key, Number = index + 1, Link = g.First() })
+                    .ToDictionary(x => x.Url, x => x);
+
+                // Заменяем номера в тексте на ссылки
+                var processedText = ReplaceNumbersInText(originalText, uniqueLinks, config.LinkReplacementTemplate);
+
+                LogService.Instance.AddLog("Текст обработан успешно");
+
+                return new ProcessingResult
+                {
+                    ProcessedText = processedText
                 };
             }
             catch (Exception ex)
@@ -172,21 +202,36 @@ namespace LinkProcessor.Services
         /// <summary>
         /// Заменяет ссылки в тексте на их порядковые номера
         /// </summary>
-        private string ReplaceLinksInText(string text, List<LinkItem> links,
+        private string ReplaceLinksInText(string text,
             Dictionary<string, TextLink> uniqueLinks, string template)
         {
             var result = text;
-
-            // Сортируем по позиции в обратном порядке, чтобы замена не сбивала индексы
-            var sortedLinks = links.OrderByDescending(l => l.Position).ToList();
-
-            foreach (var link in sortedLinks)
+            foreach (var link in uniqueLinks)
             {
-                var linkInfo = uniqueLinks[link.Url];
+                var linkInfo = link.Value;
                 var replacement = template.Replace("{number}", linkInfo.Number.ToString());
 
                 // Заменяем оригинальную ссылку на номер
-                result = result.Replace(link.OriginalLink, replacement);
+                result = result.Replace(linkInfo.Link.OriginalLink, replacement);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Заменяет номера в тексте на URL адреса
+        /// </summary>
+        private string ReplaceNumbersInText(string text,
+            Dictionary<string, TextLink> uniqueLinks, string template)
+        {
+            var result = text;
+            foreach (var link in uniqueLinks)
+            {
+                var linkInfo = link.Value;
+                var find = template.Replace("{number}", linkInfo.Number.ToString());
+
+                // Заменяем номер на адрес
+                result = result.Replace(find, linkInfo.Url);
             }
 
             return result;

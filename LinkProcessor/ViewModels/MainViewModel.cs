@@ -22,6 +22,7 @@ namespace LinkProcessor.ViewModels
         private string _originalText;
         private string _statusText;
         private bool _isProcessing;
+        private bool _isReverseMode;
         private string _processedText;
         private string _referenceList;
 
@@ -69,6 +70,12 @@ namespace LinkProcessor.ViewModels
         {
             get => _referenceList;
             set => SetProperty(ref _referenceList, value);
+        }
+
+        public bool IsReverseMode
+        {
+            get => _isReverseMode;
+            set => SetProperty(ref _isReverseMode, value);
         }
 
         #endregion
@@ -167,7 +174,8 @@ namespace LinkProcessor.ViewModels
                 "• Извлечение ссылок из текста\n" +
                 "• Автоматическое получение названий веб-ресурсов\n" +
                 "• Формирование списка источников\n" +
-                "• Замена ссылок на номера в тексте\n\n" +
+                "• Замена ссылок на номера в тексте\n" +
+                "• Обратный режим работы (замена номеров на ссылки)\n\n" +
                 "© 2025",
                 "О программе",
                 MessageBoxButton.OK,
@@ -209,13 +217,24 @@ namespace LinkProcessor.ViewModels
 
                 var config = _configService.LoadConfig();
 
-                // Получение заголовков из Google
-                StatusText = $"Получение заголовков для {selectedLinks.Count} ссылок...";
-                await _linkProcessor.FetchTitlesAsync(selectedLinks);
+                ProcessingResult result = new();
+                if (!_isReverseMode)
+                {
+                    // Получение заголовков
+                    StatusText = $"Получение заголовков для {selectedLinks.Count} ссылок...";
+                    await _linkProcessor.FetchTitlesAsync(selectedLinks);
 
-                // Обработка текста и формирование списка источников
-                StatusText = "Формирование результатов...";
-                var result = _linkProcessor.ProcessText(_originalText, selectedLinks, config);
+                    // Обработка текста и формирование списка источников
+                    StatusText = "Формирование результатов...";
+                    result = _linkProcessor.ProcessText(_originalText, selectedLinks, config);
+                }
+                else
+                {
+                    // Обработка текста в обратном режиме (номера -> ссылки)
+                    StatusText = "Формирование результатов...";
+                    result = _linkProcessor.ProcessTextReverse(_originalText, selectedLinks, config);
+                }
+
 
                 ProcessedText = result.ProcessedText;
                 ReferenceList = result.ReferenceList;
