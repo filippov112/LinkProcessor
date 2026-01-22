@@ -54,10 +54,10 @@
 
             <!-- Левая панель: список ссылок -->
             <DockPanel Grid.Column="0">
-                <TextBlock DockPanel.Dock="Top" Text="Найденные ссылки:" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBlock DockPanel.Dock="Top" Text="Найденные ссылки:" FontWeight="Bold" Margin="5,0,0,5"/>
 
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,5">
-                    <Button Content="Выбрать все" Command="{Binding SelectAllLinksCommand}" Padding="5,2" Margin="0,0,5,0"/>
+                    <Button Content="Выбрать все" Command="{Binding SelectAllLinksCommand}" Padding="5,2" Margin="5,0,5,0"/>
                     <Button Content="Снять все" Command="{Binding DeselectAllLinksCommand}" Padding="5,2" Margin="0,0,5,0"/>
                     <Button Content="Обработать" Command="{Binding ProcessLinksCommand}" Padding="5,2" FontWeight="Bold" Margin="0,0,5,0"/>
                     <CheckBox Content="Номера -> Ссылки" IsChecked="{Binding IsReverseMode}" VerticalAlignment="Center"/>
@@ -92,14 +92,14 @@
                 </Grid.RowDefinitions>
 
                 <!-- Обработанный текст -->
-                <DockPanel Grid.Row="0">
+                <DockPanel Grid.Row="0" Margin="0,5,0,0">
                     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,5">
                         <Button DockPanel.Dock="Right" 
                                 Content="📋 Копировать" 
                                 Command="{Binding CopyProcessedTextCommand}" 
                                 Padding="5,2" 
-                                Margin="5,0,0,0"/>
-                        <TextBlock Text="Обработанный текст:" FontWeight="Bold" VerticalAlignment="Center"/>
+                                Margin="5,0,5,0"/>
+                        <TextBlock Text="Обработанный текст:" FontWeight="Bold" VerticalAlignment="Center" Margin="5,0,0,0"/>
                     </DockPanel>
 
                     <Border BorderBrush="#CCCCCC" BorderThickness="1">
@@ -115,14 +115,14 @@
                 <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" Background="#E0E0E0"/>
 
                 <!-- Список источников -->
-                <DockPanel Grid.Row="2">
+                <DockPanel Grid.Row="2" Margin="0,5,0,0">
                     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,5">
                         <Button DockPanel.Dock="Right" 
                                 Content="📋 Копировать" 
                                 Command="{Binding CopyReferenceListCommand}" 
                                 Padding="5,2" 
-                                Margin="5,0,0,0"/>
-                        <TextBlock Text="Список источников:" FontWeight="Bold" VerticalAlignment="Center"/>
+                                Margin="5,0,5,0"/>
+                        <TextBlock Text="Список источников:" FontWeight="Bold" VerticalAlignment="Center" Margin="5,0,0,0"/>
                     </DockPanel>
 
                     <Border BorderBrush="#CCCCCC" BorderThickness="1">
@@ -138,9 +138,9 @@
         </Grid>
 
         <!-- Статус-бар -->
-        <StatusBar Grid.Row="2" Height="25">
+        <StatusBar Grid.Row="2" Height="28">
             <StatusBarItem>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
                     <TextBlock Text="{Binding StatusText}" Margin="0,0,10,0"/>
                     <ProgressBar Width="100" 
                                  Height="16" 
