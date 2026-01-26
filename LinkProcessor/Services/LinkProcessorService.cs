@@ -107,7 +107,7 @@ namespace LinkProcessor.Services
         /// <summary>
         /// Обрабатывает текст, заменяя ссылки на номера и формируя список источников
         /// </summary>
-        public ProcessingResult ProcessText(string originalText, List<LinkItem> selectedLinks, AppConfig config)
+        public ProcessingResult ProcessText(string originalText, int firstListValue, List<LinkItem> selectedLinks, AppConfig config)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace LinkProcessor.Services
                 // Создаем словарь уникальных ссылок с их номерами
                 var uniqueLinks = selectedLinks
                     .GroupBy(l => l.Url)
-                    .Select((g, index) => new TextLink { Url = g.Key, Number = index + 1, Link = g.First() })
+                    .Select((g, index) => new TextLink { Url = g.Key, Number = index + firstListValue, Link = g.First() })
                     .ToDictionary(x => x.Url, x => x);
 
                 // Заменяем ссылки в тексте на номера
@@ -144,14 +144,14 @@ namespace LinkProcessor.Services
         /// <summary>
         /// Обрабатывает текст в обратном режиме, заменяя номера ссылок в тексте на фактические URL адреса из списка
         /// </summary>
-        public ProcessingResult ProcessTextReverse(string originalText, List<LinkItem> selectedLinks, AppConfig config)
+        public ProcessingResult ProcessTextReverse(string originalText, int firstListValue, List<LinkItem> selectedLinks, AppConfig config)
         {
             try
             {
                 // Создаем словарь уникальных ссылок с их номерами
                 var uniqueLinks = selectedLinks
                     .GroupBy(l => l.Url)
-                    .Select((g, index) => new TextLink { Url = g.Key, Number = index + 1, Link = g.First() })
+                    .Select((g, index) => new TextLink { Url = g.Key, Number = index + firstListValue, Link = g.First() })
                     .ToDictionary(x => x.Url, x => x);
 
                 // Заменяем номера в тексте на ссылки

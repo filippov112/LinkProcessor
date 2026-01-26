@@ -25,6 +25,7 @@ namespace LinkProcessor.ViewModels
         private bool _isReverseMode;
         private string _processedText;
         private string _referenceList;
+        private int _firstListValue = 1;
 
         public MainViewModel()
         {
@@ -76,6 +77,12 @@ namespace LinkProcessor.ViewModels
         {
             get => _isReverseMode;
             set => SetProperty(ref _isReverseMode, value);
+        }
+
+        public int FirstListValue
+        {
+            get => _firstListValue;
+            set => SetProperty(ref _firstListValue, value);
         }
 
         #endregion
@@ -226,13 +233,13 @@ namespace LinkProcessor.ViewModels
 
                     // Обработка текста и формирование списка источников
                     StatusText = "Формирование результатов...";
-                    result = _linkProcessor.ProcessText(_originalText, selectedLinks, config);
+                    result = _linkProcessor.ProcessText(_originalText, _firstListValue, selectedLinks, config);
                 }
                 else
                 {
                     // Обработка текста в обратном режиме (номера -> ссылки)
                     StatusText = "Формирование результатов...";
-                    result = _linkProcessor.ProcessTextReverse(_originalText, selectedLinks, config);
+                    result = _linkProcessor.ProcessTextReverse(_originalText, _firstListValue, selectedLinks, config);
                 }
 
 
