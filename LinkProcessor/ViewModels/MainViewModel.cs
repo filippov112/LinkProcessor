@@ -318,9 +318,10 @@ namespace LinkProcessor.ViewModels
 
                 _currentFilePath = filePath;
                 _originalText = File.ReadAllText(filePath);
+                var config = _configService.LoadConfig();
 
                 // Извлечение ссылок
-                var links = _linkExtractor.ExtractLinks(_originalText);
+                var links = _linkExtractor.ExtractLinks(_originalText, config);
 
                 FoundLinks.Clear();
                 foreach (var link in links)

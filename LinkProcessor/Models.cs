@@ -99,10 +99,16 @@ namespace LinkProcessor.Models
     /// </summary>
     public class AppConfig
     {
+        public List<string> RegularExpressions { get; set; } =
+        [
+            @"\[[^\]]+\]\(([^\)]+)\)",
+            @"(https?:\/\/[^\s<>""{}|\\^`\[\]]+[[\w]|\/](?=[\s!.,;:?()\[\]{}""'-]+|$))",
+        ];
+
         /// <summary>
         /// Список последних открытых файлов
         /// </summary>
-        public List<string> RecentFiles { get; set; } = new List<string>();
+        public List<string> RecentFiles { get; set; } = [];
 
         /// <summary>
         /// Шаблон для замены ссылки в тексте

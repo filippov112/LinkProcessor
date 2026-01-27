@@ -29,6 +29,26 @@
 
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
             <StackPanel>
+                <!-- Регулярные выражения для поиска ссылок -->
+                <TextBlock Text="Регулярные выражения для поиска ссылок" 
+                    Style="{StaticResource HeaderStyle}"
+                    Margin="0,15,0,5"/>
+                <TextBlock Style="{StaticResource HelpStyle}">
+                    Шаблоны поиска (каждое выражение на новой строке).
+                    <LineBreak/>
+                    () - группа самого URL-адреса.
+                    <LineBreak/>
+                    Группы записываются в порядке приоритета поиска.
+                </TextBlock>
+                <TextBox x:Name="RegularExpressionsTextBox" 
+                     Padding="5" 
+                     FontFamily="Consolas"
+                     TextWrapping="Wrap"
+                     MinHeight="150"
+                     AcceptsReturn="True"
+                     VerticalScrollBarVisibility="Auto"
+                     ToolTip="Регулярные выражения поиска ссылок"/>
+
                 <!-- Шаблон замены ссылок в тексте -->
                 <TextBlock Text="Шаблон замены ссылок в тексте" Style="{StaticResource HeaderStyle}"/>
                 <TextBlock Style="{StaticResource HelpStyle}">
@@ -111,6 +131,11 @@
                     Orientation="Horizontal" 
                     HorizontalAlignment="Right" 
                     Margin="0,15,0,0">
+            <Button Content="Сбросить к заводским" 
+                    Click="ResetButton_Click" 
+                    Padding="5"
+                    Margin="0,0,10,0"
+                    IsDefault="True"/>
             <Button Content="Сохранить" 
                     Click="SaveButton_Click" 
                     Width="100" 

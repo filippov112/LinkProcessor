@@ -9,32 +9,15 @@ namespace LinkProcessor.Views
     public partial class SettingsWindow : Window
     {
         private readonly ConfigService _configService;
-        private AppConfig _config;
+        private AppConfig _config = new();
 
         public SettingsWindow(ConfigService configService)
         {
             InitializeComponent();
             _configService = configService;
-            LoadSettings();
-        }
-
-        /// <summary>
-        /// Загружает текущие настройки в элементы управления
-        /// </summary>
-        private void LoadSettings()
-        {
             try
             {
                 _config = _configService.LoadConfig();
-
-                LinkTemplateTextBox.Text = _config.LinkReplacementTemplate;
-                ReferenceTemplateTextBox.Text = _config.ReferenceListTemplate;
-
-                // Конвертируем правила замены в текстовый формат
-                var rulesText = string.Join(Environment.NewLine,
-                    _config.TitleReplacementRules.Select(r => $"{r.Key} → {r.Value}"));
-
-                ReplacementRulesTextBox.Text = rulesText;
             }
             catch (Exception ex)
             {
@@ -42,6 +25,33 @@ namespace LinkProcessor.Views
                 MessageBox.Show($"Ошибка при загрузке настроек: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            ApplyLoadSettings();
+        }
+
+        /// <summary>
+        /// Загружает текущие настройки в элементы управления
+        /// </summary>
+        private void ApplyLoadSettings()
+        {
+            RegularExpressionsTextBox.Text = string.Join(Environment.NewLine, _config.RegularExpressions);
+            LinkTemplateTextBox.Text = _config.LinkReplacementTemplate;
+            ReferenceTemplateTextBox.Text = _config.ReferenceListTemplate;
+            ReplacementRulesTextBox.Text = string.Join(Environment.NewLine, _config.TitleReplacementRules.Select(r => $"{r.Key} → {r.Value}"));
+        }
+
+        /// <summary>
+        /// Сбрасывает настройки к заводским
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            var new_config = new AppConfig
+            {
+                RecentFiles = _config.RecentFiles
+            };
+            _config = new_config;
+            ApplyLoadSettings();
         }
 
         /// <summary>
@@ -72,7 +82,6 @@ namespace LinkProcessor.Views
 
                 // Парсим правила замены
                 _config.TitleReplacementRules.Clear();
-
                 if (!string.IsNullOrWhiteSpace(ReplacementRulesTextBox.Text))
                 {
                     var lines = ReplacementRulesTextBox.Text.Split(new[] { Environment.NewLine },
@@ -104,6 +113,34 @@ namespace LinkProcessor.Views
                                 }
                             }
                         }
+                    }
+                }
+
+                // Парсим регулярные выражения поиска ссылок
+                _config.RegularExpressions.Clear();
+                if (!string.IsNullOrWhiteSpace(RegularExpressionsTextBox.Text))
+                {
+                    var lines = RegularExpressionsTextBox.Text.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var line in lines)
+                    {
+                        var pattern = line.Trim();
+                        if (!string.IsNullOrEmpty(pattern))
+                        {
+                            // Проверяем валидность регулярного выражения
+                            try
+                            {
+                                System.Text.RegularExpressions.Regex.IsMatch("test", pattern);
+                                _config.RegularExpressions.Add(pattern);
+                            }
+                            catch (ArgumentException)
+                            {
+                                MessageBox.Show($"Некорректное регулярное выражение: {pattern}",
+                                    "Ошибка валидации", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                return;
+                            }
+                        }
+                        
                     }
                 }
 

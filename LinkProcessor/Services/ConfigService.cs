@@ -41,8 +41,9 @@ namespace LinkProcessor.Services
 
                 // Проверка на null и создание объектов если они отсутствуют
                 config ??= new AppConfig();
-                config.RecentFiles ??= new System.Collections.Generic.List<string>();
-                config.TitleReplacementRules ??= new System.Collections.Generic.Dictionary<string, string>();
+                config.RecentFiles ??= [];
+                config.RegularExpressions ??= [];
+                config.TitleReplacementRules ??= [];
 
                 return config;
             }
